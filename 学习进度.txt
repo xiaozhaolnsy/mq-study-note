@@ -1,0 +1,7 @@
+Day1 2020-08-08 SAT MQ
+========================
+参考资料 尚硅谷ActiveMQ教程(MQ消息中间件快速入门)
+https://www.bilibili.com/video/BV164411G7aB
+
+7:00 前言
+    -> 目标： 解耦、异步、削峰
