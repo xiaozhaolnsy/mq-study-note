@@ -3,5 +3,54 @@ Day1 2020-08-08 SAT MQ
 参考资料 尚硅谷ActiveMQ教程(MQ消息中间件快速入门)
 https://www.bilibili.com/video/BV164411G7aB
 
-7:00 前言
+一、前言
     -> 目标： 解耦、异步、削峰
+    -> 产品种类：Kafka、RabbitMQ、*RocketMQ、*ActiveMQ、...
+                (j/scala)(erlang)(ali java)   (java)
+    -> 技术维度：API、高可用、集群容错、持久化、延定时投递、签收机制、Spring整合
+
+二、ActiveMQ概述
+    -> 官网 http://activemq.apache.org/ （可能有点慢）
+    -> 功能 实现高可用、高性能、可伸缩、易用、安全的企业级面向消息服务的系统
+    -> 异步消息的消费和处理
+    -> 控制消息的消费顺序
+    -> 可以和spring/springboot整合简化编码
+    -> 配置集群容错
+    此处选用docker安装
+        docker run -d --name activemq 
+                -p 61617:61616 -p 8162:8161 
+                webcenter/activemq
+        docker exec -it activemq /bin/bash 进入 ActiveMQ
+    踩坑提示：虚拟机web不可以用EDGE访问（404），推荐Chrome
+    复习Linux命令：
+        -> ./activemq start > /myactiveMQ/activemq.log (> overide,>> append)
+        ->ps -ef|grep activemq|grep -v grep (查进程、-v 过滤掉grep进程)
+        ->netstat -anp|grep 61616 (查端口是否被占)
+
+三、Java实践
+    1.IDEA Maven工程
+    2.pom
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-all</artifactId>
+            <version>5.14.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>3.16</version>
+        </dependency>
+    3.JMS总体架构(Java Message Service)
+                                                       +------------------+ 
+            +------------+              +------------> | Message Producer |
+            | Connection |              |   create     +------------------+
+            |   Factory  |         +---------+         +-----+             \ send
+            +------------+      -->| Session |-------> | MSG |     << Destination >>
+                  | create     /   +---------+ create  +-----+             / receive
+            +------------+    /         |              +------------------+
+            | Connection |---/          +------------> | Message Consumer |
+            +------------+   create         create     +------------------+
+            
+            ps >工厂获得连接，连接获得会话
+               >Destination -> Queue: 1 -> 1
+                            -> Topic: 1 -> many, publish&subscribe 
