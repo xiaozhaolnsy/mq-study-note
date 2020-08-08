@@ -2,11 +2,11 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 
-public class JMSProduce {
+public class JMSProduceTopic {
 
     private static final String ACTIVEMQ_URL="tcp://10.10.100.20:61617";
     //private static final String USERNAME="admin";
-    private static final String QUEUE_NAME="queue01";
+    private static final String TOPIC_NAME="topic01";
 
     public static void main(String[] args) throws JMSException {
         //1 创建连接工厂
@@ -19,9 +19,9 @@ public class JMSProduce {
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         //4 创建目的地（QUEUE or TOPIC）
         //Destination destination = session.createQueue(QUEUE_NAME);
-        Queue queue = session.createQueue(QUEUE_NAME);
+        Topic topic = session.createTopic(TOPIC_NAME);
         //5 创建消息生产者
-        MessageProducer messageProducer = session.createProducer(queue);
+        MessageProducer messageProducer = session.createProducer(topic);
         //6 生产消息送到队列
         for (int i = 1; i <= 3; i++){
             //7 创建消息
