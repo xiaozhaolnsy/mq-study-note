@@ -72,3 +72,33 @@ https://www.bilibili.com/video/BV164411G7aB
         2)先启动2个消费，再生产，消费情况如何？ -- 轮询
     7.queue和topic
         ->topic 先订阅后发布,只能消费订阅后发布的消息
+
+四、JMS深入
+    1.JMS属于JavaEE
+    2.什么是JavaEE 
+        -> 一套使用Java进行企业级应用开发的一直遵循的13个核心规范工业标准
+            -> JDBC、JNDI、EJB、RMI、Java IDL/CORBA、
+            JSP、Servlet、XML、
+            JMS、
+            JTA、JTS、JavaMail、JAF
+    3.四种产品的对比(此处暂略)
+    4.JMS组成结构
+        -> JMS provider、JMS producer、JMS consumer
+        -> JMS message
+            -> 消息头 -> destination、deliveryMode()、expiration、priority(0~4/5~9)、messageId
+            -> 消息体 -> *TextMessage、*MapMessage、BytesMessage、StreamMessage、ObjectMessage
+            -> 消息属性 -> property
+    5.消息可靠性
+        -> 持久化 setDeliveryMode(PERSISTENCE/NON-PERSISTENCE) 
+            -> 队列默认持久
+            -> Topic 先设置后start() 
+                -> TopicSubscriber t = session.createDurableSubscriber
+                -> start()
+                /*1 一定要先运行一次消费者 -> 向MQ注册 类似我订阅了这个公众号
+                  2 然后再运行生产者发送信息 此时
+                  3 无论消费者是否在线 都会接收到
+                    不在线 -> 下次连接时候 会把没有收到的信息全补回来
+                */
+        -> 事务 偏生产者            truansacted
+            connection.createSession( true,     ... ) ->  需提交 session.commit()
+            ...                       false,    ... ) -> 无需提交
