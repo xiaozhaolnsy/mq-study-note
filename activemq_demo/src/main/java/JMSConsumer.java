@@ -5,7 +5,8 @@ import java.io.IOException;
 
 public class JMSConsumer {
 
-    private static final String ACTIVEMQ_URL="tcp://10.10.100.20:61617";
+//    private static final String ACTIVEMQ_URL="tcp://10.10.100.20:61617";
+    private static final String ACTIVEMQ_URL="tcp://localhost:61616";
     private static final String QUEUE_NAME="queue01";
 
     public static void main(String[] args) throws JMSException, IOException {

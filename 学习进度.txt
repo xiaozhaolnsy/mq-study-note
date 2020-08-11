@@ -100,5 +100,65 @@ https://www.bilibili.com/video/BV164411G7aB
                     不在线 -> 下次连接时候 会把没有收到的信息全补回来
                 */
         -> 事务 偏生产者            truansacted
-            connection.createSession( true,     ... ) ->  需提交 session.commit()
-            ...                       false,    ... ) -> 无需提交
+            connection.createSession( true,     ... ) -> 需提交 session.commit()
+            ...          ...       ...false,    ... ) -> 无需提交
+        -> 签收 偏消费者
+            -> 4种模式 AUTO_ACKKNOWLEDGE、CLIENT_ACKNOWLEDGE、DUPS_OK_ACK..、SESSION_ACK..
+                                    需签收message.acknowledge()
+        -> 事务优先于签收 （事务自动签收）
+
+五、Broker -> 相当于一个ActiveMQ服务器实例，实现用代码启动MQ并将MQ嵌入到JAVA中，随用随启动
+    步骤
+        -> pom
+            <dependecy>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.9.5</version>
+            </dependecy>
+        -> EmbedBroker
+        -> 队列验证
+
+六、Spring整合ActiveMQ （未实践）
+    1.步骤
+        -> pom（节选必要）
+            <dependecy>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jms</artifactId>
+                <version>4.3.23.RELEASE</version>
+            </dependecy>
+            <dependecy>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-pool</artifactId>
+                <version>5.15.9</version>
+            </dependecy>
+        -> applicationContext.xml
+            <bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory" ...>...</bean>
+            <bean id="DestinationQueue" class="org.apache.activemq.command.ActiveMQQueue" ...>...</bean>
+            <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate" ...>...</bean>
+        -> jmsTemplate.调用 使用
+    2.配置监听
+        <bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+            <property name="ConnectionFactory" ref="jmsContainer"/>
+            <property name="Destination" ref="DestinationQueue"/>
+            <property name="messageListener" ref="myMessageListener"/>
+        </bean>
+
+        <bean id="myMessageListener" class="xxx.xxx.myMessageListener"/><(接口实现类)
+
+七、SpringBoot整合ActiveMQ
+    -> pom（节选必要）
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+        </dependency>
+    -> yml
+    -> @Bean 注入一个 @Value出来的指定Destination
+        *注意 @EnableJMS
+    -> Producer: jmsMessagingTemplate.convertAndSend()
+    -> SpringApplication.run()
+    -> 测试
+        @SpringBootTest(classes = Application.class)
+        @RunWith(SpringJUnit4ClassRunner.class)
+        @WebAppConfiguration
+    -> 间隔定投 @EnableScheduling主启动类 
+         @Scheduled(fixedDelay = 3000)

@@ -4,7 +4,8 @@ import javax.jms.*;
 
 public class JMSProduce {
 
-    private static final String ACTIVEMQ_URL="tcp://10.10.100.20:61617";
+//    private static final String ACTIVEMQ_URL="tcp://10.10.100.20:61617";
+    private static final String ACTIVEMQ_URL="tcp://localhost:61616";
     //private static final String USERNAME="admin";
     private static final String QUEUE_NAME="queue01";
 
